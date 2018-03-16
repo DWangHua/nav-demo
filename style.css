@@ -1,0 +1,68 @@
+/* 避免文字选中 */
+body {
+  min-width: 1000px;
+}
+
+::-moz-selection {
+  background: transparent;
+  text-shadow: none;
+}
+
+::selection {
+  background: transparent;
+  text-shadow: none;
+}
+
+.kbd-row {
+  text-align: center;
+}
+
+.kbd-row:nth-child(2) {
+  margin-left: -40px;
+}
+
+.kbd-row:nth-child(3) {
+  margin-left: -160px;
+}
+
+.kbd-row .kbd-item + .kbd-item {
+  margin-left: 12px;
+}
+
+.kbd-item {
+  position: relative;
+  display: inline-block;
+  /* align-items: center;
+  justify-content: space-between; */
+  width: 46px;
+  height: 68px;
+  border-radius: 8px;
+  /* line-height:  */
+  padding: 0 12px;
+  margin-bottom: 12px;
+  background-color: #000;
+  color: #fff;
+  text-align: left;
+  font-family: keyboard, "Arial Rounded", Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.kbd-item span {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.kbd-item img {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+}
+
+.kbd-item:active {
+  top: 2px;
+  box-shadow: 2px 0 2px rgba(0, 0, 0, 0.5);
+}
