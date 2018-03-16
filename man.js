@@ -118,11 +118,13 @@ var kbds = (function() {
       var newUrl = prompt('请输入新的地址，如：www.baidu.com');
       var key = e.target.parentElement.textContent;
       var img = e.target.parentElement.getElementsByClassName(consts.getKbdClsName() + '__img')[0];
-      consts.saveToLocal(key, newUrl);
-      img.src = 'http://' + newUrl + '/favicon.ico';
-      img.onerror = function(e) {
-        e.target.src = consts.getDefaultIcon();
-      };
+      if (newUrl) {
+        consts.saveToLocal(key, newUrl);
+        img.src = 'http://' + newUrl + '/favicon.ico';
+        img.onerror = function(e) {
+          e.target.src = consts.getDefaultIcon();
+        };
+      }
     }
   }
 
