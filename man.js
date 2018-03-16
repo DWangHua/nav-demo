@@ -1,6 +1,7 @@
 var kbds = (function() {
 
   var consts = (function() {
+    var loaclKey = '__URL__MAP__';
     var keys = [
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
       ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
@@ -27,12 +28,21 @@ var kbds = (function() {
     var kdbRowClsName = 'kbd-row';
     var kbdClsName = 'kbd-item';
     var defaultIcon = '//i.loli.net/2017/11/10/5a05afbc5e183.png';
+
+    function saveToLocal(key, newUrl) {
+      keyUrlMap[key] = newUrl;
+      localStorage.setItem(loaclKey, JSON.stringify(keyUrlMap));
+    }
+
     return {
       getKeys: function() { return keys; },
-      getKeyUrlMap: function() { return keyUrlMap },
+      getKeyUrlMap: function() {
+        return localStorage.getItem(loaclKey) ? JSON.parse(localStorage.getItem(loaclKey)) : keyUrlMap;
+      },
       getKbdClsName: function() { return kbdClsName; },
       getKbdRowClsName: function() { return kdbRowClsName; },
-      getDefaultIcon: function() { return defaultIcon; }
+      getDefaultIcon: function() { return defaultIcon; },
+      saveToLocal: saveToLocal
     }
   })();
 
@@ -43,6 +53,7 @@ var kbds = (function() {
       el.appendChild(renderRow(keys[i]));
     }
     document.addEventListener('keypress', keyPressListener);
+    el.addEventListener('click', editUrl);
   }
 
   function renderRow(list) {
@@ -59,23 +70,32 @@ var kbds = (function() {
 
   function renderKbd(item) {
     var kbd = tag('kbd');
-    var span = tag('span');
-    var img = new Image();
+    var textSpan = tag('span');
+    var editIcon = tag('span');
     var domain = consts.getKeyUrlMap()[item]
-    var defaultIcon = consts.getDefaultIcon();
-    var iconSrc;
-    iconSrc = domain ? 'http://' + domain + '/favicon.ico' : defaultIcon;
-    img.src = iconSrc;
-    img.onerror = function(e) {
-      e.target.src = defaultIcon;
-    };
+    kbd.className = consts.getKbdClsName();
+    textSpan.className = consts.getKbdClsName() + '__text';
+    editIcon.className = consts.getKbdClsName() + '__edit';
+    textSpan.textContent = item;
+    
+    kbd.appendChild(textSpan);
+    kbd.appendChild(renderImg(domain));
+    kbd.appendChild(editIcon);
+    return kbd;
+  }
+  
+  
+  function renderImg(domain) {
+    var img = tag('img');
+    var iconSrc = domain ? 'http://' + domain + '/favicon.ico' : consts.getDefaultIcon();
+    img.className = consts.getKbdClsName() + '__img';
     img.width = 18;
     img.height = 18;
-    kbd.className = consts.getKbdClsName();
-    span.textContent = item;
-    kbd.appendChild(span);
-    kbd.appendChild(img);
-    return kbd;
+    img.src = iconSrc;
+    img.onerror = function(e) {
+      e.target.src = consts.getDefaultIcon();
+    }
+    return img;
   }
 
   function tag(tag) {
@@ -91,6 +111,19 @@ var kbds = (function() {
     var domain = consts.getKeyUrlMap()[key];
     domain ? window.open('http://' + domain, '_blank') : alert('暂无对应网址');
     e.preventDefault();
+  }
+
+  function editUrl(e) {
+    if (e.target.tagName.toLowerCase() === 'span' && e.target.className === consts.getKbdClsName() + '__edit') {
+      var newUrl = prompt('请输入新的地址，如：www.baidu.com');
+      var key = e.target.parentElement.textContent;
+      var img = e.target.parentElement.getElementsByClassName(consts.getKbdClsName() + '__img')[0];
+      consts.saveToLocal(key, newUrl);
+      img.src = 'http://' + newUrl + '/favicon.ico';
+      img.onerror = function(e) {
+        e.target.src = consts.getDefaultIcon();
+      };
+    }
   }
 
   return {
