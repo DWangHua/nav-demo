@@ -30,7 +30,7 @@ var kbds = (function() {
     var defaultIcon = '//i.loli.net/2017/11/10/5a05afbc5e183.png';
 
     function saveToLocal(key, newUrl) {
-      keyUrlMap[key] = newUrl;
+      newUrl.trim() === '' ? delete keyUrlMap[key] : keyUrlMap[key] = newUrl;
       localStorage.setItem(loaclKey, JSON.stringify(keyUrlMap));
     }
 
@@ -118,13 +118,12 @@ var kbds = (function() {
       var newUrl = prompt('请输入新的地址，如：www.baidu.com');
       var key = e.target.parentElement.textContent;
       var img = e.target.parentElement.getElementsByClassName(consts.getKbdClsName() + '__img')[0];
-      if (newUrl) {
-        consts.saveToLocal(key, newUrl);
-        img.src = 'http://' + newUrl + '/favicon.ico';
-        img.onerror = function(e) {
-          e.target.src = consts.getDefaultIcon();
-        };
-      }
+
+      consts.saveToLocal(key, newUrl);
+      img.src = newUrl.trim() ? 'http://' + newUrl + '/favicon.ico' : consts.getDefaultIcon();
+      img.onerror = function(e) {
+        e.target.src = consts.getDefaultIcon();
+      };
     }
   }
 
